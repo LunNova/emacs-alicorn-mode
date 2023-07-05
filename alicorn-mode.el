@@ -255,7 +255,7 @@ Will align column to next multiple of four, up to previous line indentation + 4.
         (forward-to-indentation 0)))
 
 ;;;autoload
-(define-derived-mode alicorn-mode scheme-mode "Alicorn"
+(define-derived-mode alicorn-mode lisp-mode "Alicorn"
   "Major mode for editing Alicorn code."
 
   (set-syntax-table alicorn-mode-syntax-table)
@@ -264,14 +264,19 @@ Will align column to next multiple of four, up to previous line indentation + 4.
   (setq-local comment-end "")
   (setq-local comment-add 0)
   (setq-local comment-use-syntax nil)
-  (setq-local electric-indent-inhibit t)
-  ;; TODO: change to a custom indent function that behaves differently inside a
-  ;; parenthesized expression
-  ;; TODO: fix this for alicorn if needed
+  ;; this disables automatically keeping indent level if uncommented
+  ;; (setq-local electric-indent-inhibit t)
+  ;; (electric-indent-local-mode -1)
+
+  ;; TODO: create correct custom indent function if electric-indent isn't good enough
   ;; (setq-local indent-line-function 'alicorn-indent-line)
+
   (setq-local indent-tabs-mode t)
-  (electric-indent-local-mode -1)
-  ;; (setq-)
+
+  ;; this is supposed to fix backspace converting tabs to spaces
+  ;; but it doesn't do anything
+  (setq-local backward-delete-char-untabify-method 'hungry)
+
   (setq font-lock-multiline t
         font-lock-defaults '((alicorn-font-lock-keywords) t)))
 
