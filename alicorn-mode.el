@@ -257,6 +257,7 @@ Will align column to next multiple of four, up to previous line indentation + 4.
 ;;;autoload
 (define-derived-mode alicorn-mode lisp-mode "Alicorn"
   "Major mode for editing Alicorn code."
+  ;; :after-hook (setq-local backward-delete-char-untabify-method 'hungry)
 
   (set-syntax-table alicorn-mode-syntax-table)
   (setq-local comment-start "#")
@@ -264,18 +265,23 @@ Will align column to next multiple of four, up to previous line indentation + 4.
   (setq-local comment-end "")
   (setq-local comment-add 0)
   (setq-local comment-use-syntax nil)
-  ;; this disables automatically keeping indent level if uncommented
-  ;; (setq-local electric-indent-inhibit t)
-  ;; (electric-indent-local-mode -1)
 
   ;; TODO: create correct custom indent function if electric-indent isn't good enough
   ;; (setq-local indent-line-function 'alicorn-indent-line)
 
-  (setq-local indent-tabs-mode t)
-
   ;; this is supposed to fix backspace converting tabs to spaces
   ;; but it doesn't do anything
-  (setq-local backward-delete-char-untabify-method 'hungry)
+  ;;(setq-local backward-delete-char-untabify-method nil)
+
+  ;; bodge time i don't know what i'm doing
+  (add-hook 'alicorn-mode-hook
+      (lambda ()
+        (setq-local backward-delete-char-untabify-method 'hungry)
+        (setq-local indent-tabs-mode t)
+        (setq-local indent-line-function 'indent-relative)
+        (setq-local electric-indent-inhibit nil)
+        (electric-indent-local-mode +1)
+        ))
 
   (setq font-lock-multiline t
         font-lock-defaults '((alicorn-font-lock-keywords) t)))
